@@ -36,6 +36,25 @@ if [ -n "${MC_INIT_SCRIPT}" ]; then
     source ${MC_INIT_SCRIPT}
 fi
 
+echo "Configuring OIDC now"
+java \
+  -cp "${MC_CLASSPATH}" \
+  com.hazelcast.webmonitor.cli.MCConfCommandLine oidc configure \
+ --home="${MC_DATA}" \
+ --client-id=3c8b975887b8440b9dbe7b77e9ab55ba \
+ --client-secret=sCHhWfjnSPRsDSLXeZXHvvLIaij8Y9rQZqaPKEKahkOzSqwbWVnl6jjv0HPV \
+ --authorization-endpoint-url=https://icp-console.apps.yellow-13.dev.multicloudops.io/oidc/endpoint/OP/authorize \
+ --user-info-endpoint-url=https://icp-console.apps.yellow-13.dev.multicloudops.io/oidc/endpoint/OP/userinfo \
+ --token-endpoint-url=https://icp-console.apps.yellow-13.dev.multicloudops.io/oidc/endpoint/OP/token \
+ --jwk-set-url=https://icp-console.apps.yellow-13.dev.multicloudops.io/oidc/endpoint/OP/jwk \
+ --issuer=https://icp-console.apps.yellow-13.dev.multicloudops.io/idauth/oidc/endpoint/OP \
+ --redirect-url=http://hazelcast-mc-service-hazelcast-management-center.apps.yellow-13.dev.multicloudops.io/oidc/authorization-code \
+ --groups-claim-name=groups \
+ --admin-groups=admin \
+ --read-write-groups=mc-read-write \
+ --read-only-groups=mc-read-only \
+ --metrics-only-groups=mc-metrics-only
+
 if [ -n "${MC_ADMIN_USER}" ] && [ -n "${MC_ADMIN_PASSWORD}" ]; then
   echo "Creating admin user"
   source ./mc-conf.sh user create -H=${MC_DATA} -n=${MC_ADMIN_USER} -p=${MC_ADMIN_PASSWORD} -r=admin
